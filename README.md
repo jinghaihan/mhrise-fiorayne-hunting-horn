@@ -18,6 +18,10 @@ This scoped derivative is based on [The best music corps](https://www.nexusmods.
 
 The build script uses [REasy](https://github.com/seifhassine/REasy) to edit and validate RE Engine data files.
 
+## License
+
+[MIT](./LICENSE) License © [jinghaihan](https://github.com/jinghaihan) applies to the original code and documentation in this repository. The modified game data under `mod/` is derived from NyoiStick's original work and is not relicensed under MIT; refer to the original mod page linked in [Credits](#credits).
+
 ## Building
 
 The original mod archive is intentionally not included. To rebuild the scoped version, download v1.3 from Nexus Mods and provide a local REasy checkout:
