@@ -1,0 +1,29 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package mod
+        run: python3 scripts/package.py
+
+      - name: Verify checksum
+        run: |
+          cd dist
+          sha256sum --check *.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mhrise-fiorayne-hunting-horn
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14

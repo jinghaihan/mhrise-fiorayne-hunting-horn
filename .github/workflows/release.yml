@@ -1,0 +1,76 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag version
+        run: |
+          project_version="$(tr -d '[:space:]' < VERSION)"
+          test "${GITHUB_REF_NAME}" = "v${project_version}"
+
+      - name: Package mod
+        run: python3 scripts/package.py
+
+      - name: Verify checksum
+        run: |
+          cd dist
+          sha256sum --check *.sha256
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mhrise-fiorayne-hunting-horn-release
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: mhrise-fiorayne-hunting-horn-release
+          path: dist
+
+      - name: Generate release notes
+        run: npx changelogithub --github "$GITHUB_REPOSITORY"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release files
+        run: gh release upload "${GITHUB_REF_NAME}" --repo "$GITHUB_REPOSITORY" dist/* --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify downloadable release asset
+        run: |
+          mkdir release-download
+          gh release download "${GITHUB_REF_NAME}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "*.zip" \
+            --dir release-download
+          archive_name="$(basename dist/*.zip)"
+          expected_sha="$(awk '{print $1}' dist/*.sha256)"
+          actual_sha="$(sha256sum "release-download/${archive_name}" | awk '{print $1}')"
+          test "${actual_sha}" = "${expected_sha}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
