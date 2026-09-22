@@ -1,10 +1,14 @@
 # MHRise Fiorayne Hunting Horn
 
+[![release](https://img.shields.io/github/v/release/jinghaihan/mhrise-fiorayne-hunting-horn)](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/releases/latest)
+[![build](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/actions/workflows/build.yml/badge.svg)](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/actions/workflows/build.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Adds Hunting Horn support to Fiorayne with the same equipment performance and skill data as Utsushi. Existing player weapons and other follower behavior are left unchanged.
 
 ## Installation
 
-Copy `mod/Fiorayne Hunting Horn` into the Monster Hunter Rise mods directory used by [Fluffy Mod Manager](https://www.nexusmods.com/monsterhunterrise/mods/7), then enable it in the manager.
+Download the latest ZIP from [Releases](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/releases/latest), extract `Fiorayne Hunting Horn` into the Monster Hunter Rise mods directory used by [Fluffy Mod Manager](https://www.nexusmods.com/monsterhunterrise/mods/7), then enable it in the manager.
 
 Back up your game files and disable conflicting follower equipment mods before testing.
 
