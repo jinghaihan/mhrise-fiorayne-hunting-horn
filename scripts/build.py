@@ -146,7 +146,7 @@ def build(source: Path, reasy: Path, output: Path) -> None:
             "\n".join(
                 [
                     f"name={MOD_NAME}",
-                    "version=v1.0.0",
+                    "version=v0.1.0",
                     "description=Adds Hunting Horn support to Fiorayne with Utsushi-equivalent performance. Other followers and player weapons are unchanged.",
                     "author=jinghaihan, based on NyoiStick's work",
                     "",
