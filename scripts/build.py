@@ -3,7 +3,6 @@
 import argparse
 import contextlib
 import io
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -13,6 +12,8 @@ from pathlib import Path
 MOD_NAME = "Fiorayne Hunting Horn"
 HORN_WEAPON_TYPE = 10
 FIORAYNE_ID = 1
+ANTIQUE_MACHINA_HORN_MODEL_ID = 143654979
+ROYAL_ORDER_HORN_MODEL_ID = 143654978
 VANILLA_HORN_FOLLOWER_IDS = {8, 9, 10}
 ADDED_HORN_FOLLOWER_IDS = {2, 3, 4, 5, 6, 7}
 
@@ -88,14 +89,16 @@ def build(source: Path, reasy: Path, output: Path) -> None:
         source_servant = (
             source_root / "natives/STM/servant/prefab/ServantManager/ServantData"
         )
-        shutil.copy2(
-            source_servant / "ServantData_1.user.2",
-            servant_output / "ServantData_1.user.2",
-        )
-
         quiet = io.StringIO()
         with contextlib.redirect_stdout(quiet):
             registry = TypeRegistry(str(registry_path))
+
+        set_fiorayne_horn_model(
+            source_servant / "ServantData_1.user.2",
+            servant_output / "ServantData_1.user.2",
+            registry,
+            RszFile,
+        )
 
         generated = 0
         for source_file in sorted(source_equip.glob("MR*.user.2")):
@@ -146,7 +149,7 @@ def build(source: Path, reasy: Path, output: Path) -> None:
             "\n".join(
                 [
                     f"name={MOD_NAME}",
-                    "version=v0.1.0",
+                    "version=v0.1.1",
                     "description=Adds Hunting Horn support to Fiorayne with Utsushi-equivalent performance. Other followers and player weapons are unchanged.",
                     "author=jinghaihan, based on NyoiStick's work",
                     "",
@@ -157,6 +160,34 @@ def build(source: Path, reasy: Path, output: Path) -> None:
 
         if generated != 17:
             raise RuntimeError(f"Expected 17 equipment files, generated {generated}")
+
+
+def set_fiorayne_horn_model(
+    source: Path, destination: Path, registry, rsz_file_class
+) -> None:
+    quiet = io.StringIO()
+    with contextlib.redirect_stdout(quiet):
+        parsed = rsz_file_class()
+        parsed.filepath = str(source)
+        parsed.type_registry = registry
+        parsed.read(source.read_bytes())
+
+    weapon_models = [
+        element
+        for index, element in parsed.parsed_elements.items()
+        if (registry.get_type_info(parsed.instance_infos[index].type_id) or {}).get("name")
+        == "snow.ai.ServantWeaponModelList"
+    ]
+    if len(weapon_models) != 1:
+        raise RuntimeError("Unexpected Fiorayne weapon model structure")
+
+    horn_model = weapon_models[0]["_HornWeaponModelId"]
+    if horn_model.value != ANTIQUE_MACHINA_HORN_MODEL_ID:
+        raise RuntimeError("Unexpected original Fiorayne Hunting Horn model")
+    horn_model.value = ROYAL_ORDER_HORN_MODEL_ID
+
+    with contextlib.redirect_stdout(quiet):
+        destination.write_bytes(parsed.build(special_align_enabled=False))
 
 
 def validate_output(path: Path, registry, rsz_file_class) -> None:

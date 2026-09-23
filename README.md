@@ -4,7 +4,7 @@
 [![build](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/actions/workflows/build.yml/badge.svg)](https://github.com/jinghaihan/mhrise-fiorayne-hunting-horn/actions/workflows/build.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Adds Hunting Horn support to Fiorayne with the same equipment performance and skill data as Utsushi. Existing player weapons and other follower behavior are left unchanged.
+Adds Hunting Horn support to Fiorayne with the same Hunting Horn equipment performance and skill data as Utsushi. Her horn uses the Royal Order appearance. Existing player weapons and other follower behavior are left unchanged.
 
 ## Installation
 
